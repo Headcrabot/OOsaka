@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Carcassonne.sln"
+    "dotnet.defaultSolution": "OOsaka.sln"
 }
