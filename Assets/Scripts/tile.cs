@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class tile : MonoBehaviour
 {
-
     private int _id = 0;
     public int id { get { return _id; } }
 
@@ -11,6 +11,7 @@ public class tile : MonoBehaviour
     private bool bPlaced = false;
     private gameMaster _master;
     [SerializeField] private Renderer _render;
+    [SerializeField] private List<tileElement> elements;
 
     public void Colore(bool bAvailable)
     {
@@ -26,6 +27,7 @@ public class tile : MonoBehaviour
 
         _id = nid;
         gameObject.name = $"tile{_id}";
+
         _master = gameMaster.master;
         bInitialized = true;
     }

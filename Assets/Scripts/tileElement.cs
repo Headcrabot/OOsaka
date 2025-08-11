@@ -1,16 +1,12 @@
 using UnityEngine;
 
-public class tileElement : MonoBehaviour
+public class tileElement : ScriptableObject
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private string _sname = "road";
+    public string sName { get { return _sname; } }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // like so (0,1) is up, (-1,-1) is left down corner
+    [SerializeField] private Vector2 _position;
+    public Vector2 position { get { return _position; } }
+    
 }

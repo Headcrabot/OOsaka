@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class tilePlacer : MonoBehaviour
@@ -48,8 +49,8 @@ public class tilePlacer : MonoBehaviour
                 Vector3 worldPosition = pointerRay.GetPoint(intersectionDistance);
 
                 // position in placing grid
-                iPlacingX = Mathf.Clamp(Mathf.RoundToInt(worldPosition.x), 0, _master.iMapSize.x-1);
-                iPlacingY = Mathf.Clamp(Mathf.RoundToInt(worldPosition.z), 0, _master.iMapSize.y-1);
+                iPlacingX = Mathf.Clamp(Mathf.RoundToInt(worldPosition.x), 0, _master.iMapSize.x - 1);
+                iPlacingY = Mathf.Clamp(Mathf.RoundToInt(worldPosition.z), 0, _master.iMapSize.y - 1);
 
                 // real position in world
                 float wpx = iPlacingX * _master.tileSize;
@@ -59,14 +60,20 @@ public class tilePlacer : MonoBehaviour
             }
 
             bool bAvaliable = false;
-            
-            bAvaliable = _master.isPlaceFree(iPlacingX, iPlacingY);
+
+            bAvaliable = _master.PlaceFree(iPlacingX, iPlacingY);
             //Debug.Log($"CHECKING TILE {iPlacingX} {iPlacingY} IS {bAvaliable}");
             selectedTile.Colore(bAvaliable);
             if (Input.GetMouseButtonDown(1) && bAvaliable)
             {
                 _master.AppendToMap(iPlacingX, iPlacingY, selectedTile);
                 PlaceTile();
+            }
+
+            // Debug
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                _master.CheckNeighbours(iPlacingX, iPlacingY);
             }
         }
     }

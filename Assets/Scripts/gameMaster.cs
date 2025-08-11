@@ -44,14 +44,32 @@ public class gameMaster : MonoBehaviour
         // }
     }
 
-    public bool isPlaceFree(int nx, int ny)
+    public bool PlaceFree(int nx, int ny)
     {
         return (_map[nx, ny] == null);
     }
 
+    public bool CheckNeighbours(int nx, int ny)
+    {
+        int rightBorder = iMapWidth-1;
+        int upperBorder = iMapHeight-1;
+        Debug.Log($"CHECKING NEIGHBOUR OF ({nx},{ny}) FROM ({((nx - 1 >= 0) ? nx - 1 : 0)},{((ny - 1 >= 0) ? ny - 1 : 0)}) TO ({((nx + 1 < rightBorder) ? nx + 1 : rightBorder)},{((ny + 1 < upperBorder) ? ny + 1 : upperBorder)})");
+        for (int x = (nx - 1 >= 0) ? nx - 1 : 0; x <= ((nx + 1 < rightBorder) ? nx + 1 : rightBorder); x++)
+        {
+            for (int y = (ny - 1 >= 0) ? ny - 1 : 0; y <= ((ny + 1 < upperBorder) ? ny + 1 : upperBorder); y++)
+            {
+                if (x == nx && y == ny)
+                    continue;
+                Debug.Log($"CHECKED NEIGHBOUR AT ({x},{y})");
+            }
+        }
+
+        return false;
+    }
+
     public bool AppendToMap(int nx, int ny, tile ntile)
     {
-        if (isPlaceFree(nx, ny))
+        if (PlaceFree(nx, ny))
         {
             _map[nx, ny] = ntile;
             _tileCounter++;
