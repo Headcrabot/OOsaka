@@ -4,10 +4,18 @@ public class gameMaster : MonoBehaviour
 {
     public static gameMaster master;
 
+    [Header("OTHER MASTERS LINKS")]
     [SerializeField] private guiMaster _gui;
+    [SerializeField] private cameraMaster _camera;
+
+    [Header("MAP PARAMETERS")]
     [SerializeField] private float _tileSize = 1f;
     public float tileSize { get { return _tileSize; } }
 
+    [SerializeField] private float _groundY = 0f;
+    public float groundY { get { return _groundY; } }
+
+    
     [SerializeField] private int iMapWidth = 10;
     [SerializeField] private int iMapHeight = 10;
     public Vector2Int iMapSize {get{ return new Vector2Int(iMapWidth, iMapHeight); }}
@@ -20,6 +28,7 @@ public class gameMaster : MonoBehaviour
     {
         master = this;
         InitializeMap();
+        _camera.Initialize();
     }
 
     private void InitializeMap()

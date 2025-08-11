@@ -9,22 +9,14 @@ public class tile : MonoBehaviour
 
     private bool bInitialized = false;
     private bool bPlaced = false;
-
+    private gameMaster _master;
     [SerializeField] private Renderer _render;
 
-    public void Colore(bool bAvaliable)
+    public void Colore(bool bAvailable)
     {
-        if (!bPlaced || !bInitialized)
-            return;
-
-        if (bAvaliable)
-        {
-            _render.material.color = Color.green;
-        }
-        else
-        {
-            _render.material.color = Color.red;
-        }
+        //Debug.Log($"COLOR {_render.material.color} PLACED {bPlaced} INIT {bInitialized}");
+        if (bPlaced || !bInitialized) { return; }
+        ChangeColor(bAvailable ? Color.green : Color.red);
     }
 
     public void Initialize(int nid)
@@ -34,13 +26,20 @@ public class tile : MonoBehaviour
 
         _id = nid;
         gameObject.name = $"tile{_id}";
+        _master = gameMaster.master;
         bInitialized = true;
     }
-    public void Place()
+    public void Place(int inx, int iny)
     {
         if (bPlaced)
             return;
-
+        ChangeColor(Color.white);
+        transform.position = new Vector3(inx * _master.tileSize, _master.groundY, iny * _master.tileSize);
         bPlaced = true;
+    }
+
+    private void ChangeColor(Color ncolor)
+    {
+        _render.material.color = ncolor;
     }
 }

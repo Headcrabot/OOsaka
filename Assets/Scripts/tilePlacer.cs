@@ -5,6 +5,7 @@ public class tilePlacer : MonoBehaviour
     private tile selectedTile = null;
 
     [SerializeField] private tile tilePrefab;
+    [SerializeField] private float fSelectedOffset = 1f;
 
     private gameMaster _master;
     private Camera _camera;
@@ -30,7 +31,7 @@ public class tilePlacer : MonoBehaviour
 
     private void PlaceTile()
     {
-        selectedTile.Place();
+        selectedTile.Place(iPlacingX, iPlacingY);
         selectedTile = null;
     }
 
@@ -54,13 +55,13 @@ public class tilePlacer : MonoBehaviour
                 float wpx = iPlacingX * _master.tileSize;
                 float wpz = iPlacingY * _master.tileSize;
 
-                selectedTile.transform.position = new Vector3(wpx, 0f, wpz);
+                selectedTile.transform.position = new Vector3(wpx, _master.groundY + fSelectedOffset, wpz);
             }
 
             bool bAvaliable = false;
-            //Debug.Log($"CHECKING TILE {iPlacingX} {iPlacingY}");
+            
             bAvaliable = _master.isPlaceFree(iPlacingX, iPlacingY);
-
+            //Debug.Log($"CHECKING TILE {iPlacingX} {iPlacingY} IS {bAvaliable}");
             selectedTile.Colore(bAvaliable);
             if (Input.GetMouseButtonDown(1) && bAvaliable)
             {
