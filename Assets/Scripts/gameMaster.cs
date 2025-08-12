@@ -15,11 +15,15 @@ public class gameMaster : MonoBehaviour
     [SerializeField] private float _groundY = 0f;
     public float groundY { get { return _groundY; } }
 
-    
+
     [SerializeField] private int iMapWidth = 10;
     [SerializeField] private int iMapHeight = 10;
-    public Vector2Int iMapSize {get{ return new Vector2Int(iMapWidth, iMapHeight); }}
+    public Vector2Int iMapSize { get { return new Vector2Int(iMapWidth, iMapHeight); } }
 
+    private int iRightBorder = 9;
+    private int iUpperBorder = 9;
+
+    
     private tile[,] _map;
     private int _tileCounter = 0;
     public int tileCounter { get { return _tileCounter; } }
@@ -33,6 +37,8 @@ public class gameMaster : MonoBehaviour
 
     private void InitializeMap()
     {
+        iRightBorder = iMapWidth - 1;
+        iUpperBorder = iMapHeight - 1;
         _map = new tile[iMapWidth, iMapHeight];
         // for (int i = 0; i < iMapWidth; i++)
         // {
@@ -44,37 +50,87 @@ public class gameMaster : MonoBehaviour
         // }
     }
 
-    public bool PlaceFree(int nx, int ny)
+    public bool PlaceFree(int nx, int ny) => (_map[nx, ny] == null);
+
+    public bool CheckNeighbours(int nx, int ny, bool bOnlyStraight = true)
     {
-        return (_map[nx, ny] == null);
+        //Debug.Log($"CHECKING NEIGHBOUR OF ({nx},{ny}) FROM ({((nx - 1 >= 0) ? nx - 1 : 0)},{((ny - 1 >= 0) ? ny - 1 : 0)}) TO ({((nx + 1 < iRightBorder) ? nx + 1 : iRightBorder)},{((ny + 1 < iUpperBorder) ? ny + 1 : iUpperBorder)})");
+        tile[] neighbours;
+        if (bOnlyStraight)
+        {
+            neighbours = StraightNeighbours(nx, ny);
+        }
+        else
+        {
+            neighbours = StraightNeighbours(nx, ny);
+        }
+        foreach (var i in neighbours)
+        {
+            if (i == null)
+                continue;
+            //Debug.Log(i.id);
+        }
+        return false;
+    }
+    // added to map
+    public bool AppendToMap(int nx, int ny, tile ntile)
+    {
+        if (!(IsInBounds(nx, ny) && PlaceFree(nx, ny)))
+            return false;
+        
+        _map[nx, ny] = ntile;
+        _tileCounter++;
+        return true;
     }
 
-    public bool CheckNeighbours(int nx, int ny)
+    // return those neighbours
+    //   #
+    //  #.#
+    //   #
+    private tile[] StraightNeighbours(int nx, int ny)
     {
-        int rightBorder = iMapWidth-1;
-        int upperBorder = iMapHeight-1;
-        Debug.Log($"CHECKING NEIGHBOUR OF ({nx},{ny}) FROM ({((nx - 1 >= 0) ? nx - 1 : 0)},{((ny - 1 >= 0) ? ny - 1 : 0)}) TO ({((nx + 1 < rightBorder) ? nx + 1 : rightBorder)},{((ny + 1 < upperBorder) ? ny + 1 : upperBorder)})");
-        for (int x = (nx - 1 >= 0) ? nx - 1 : 0; x <= ((nx + 1 < rightBorder) ? nx + 1 : rightBorder); x++)
+        tile[] neighbours = new tile[4];
+        if (!IsInBounds(nx, ny))
+            return neighbours;
+
+        neighbours[0] = (nx > 0) ? (_map[nx - 1, ny]) : (null);
+        neighbours[1] = (ny > 0) ? (_map[nx, ny - 1]) : (null);
+        neighbours[2] = (nx < iMapWidth - 1) ? (_map[nx + 1, ny]) : (null);
+        neighbours[3] = (nx < iMapHeight - 1) ? (_map[nx, ny + 1]) : (null);
+
+        return neighbours;
+    }
+
+    // return those neighbours
+    //  ###
+    //  #.#
+    //  ###
+    private tile[] AllNeighbours(int nx, int ny)
+    {
+        tile[] neighbours = new tile[8];
+        if (!IsInBounds(nx, ny))
+            return neighbours;
+
+        for (int x = (nx - 1 >= 0) ? nx - 1 : 0; x <= ((nx + 1 < iRightBorder) ? nx + 1 : iRightBorder); x++)
         {
-            for (int y = (ny - 1 >= 0) ? ny - 1 : 0; y <= ((ny + 1 < upperBorder) ? ny + 1 : upperBorder); y++)
+            for (int y = (ny - 1 >= 0) ? ny - 1 : 0; y <= ((ny + 1 < iUpperBorder) ? ny + 1 : iUpperBorder); y++)
             {
                 if (x == nx && y == ny)
                     continue;
-                Debug.Log($"CHECKED NEIGHBOUR AT ({x},{y})");
+
+                neighbours[x * 3 + y] = _map[x, y];
             }
         }
-
-        return false;
+        return neighbours;
     }
 
-    public bool AppendToMap(int nx, int ny, tile ntile)
+    // checks tile coordinate in map
+    public bool IsInBounds(int nx, int ny)
     {
-        if (PlaceFree(nx, ny))
-        {
-            _map[nx, ny] = ntile;
-            _tileCounter++;
-            return true;
-        }
-        return false;
+        if (nx < 0 || nx > iMapWidth - 1)
+            return false;
+        if (ny < 0 || ny > iMapHeight - 1)
+            return false;
+        return true;
     }
 }
