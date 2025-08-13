@@ -1,15 +1,26 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class guiMaster : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private Button buttonPlace;
+
+    private gameMaster _master;
+    private bool bInitialized = false;
+    
+
+    public void Initialize()
     {
+        if (bInitialized)
+            return;
+
+        _master = gameMaster.master;
+        buttonPlace.onClick.AddListener(_master.DeckPull);
         
+        bInitialized = true;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OGUI()
     {
         
     }

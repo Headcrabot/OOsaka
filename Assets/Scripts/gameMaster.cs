@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class gameMaster : MonoBehaviour
@@ -7,6 +8,8 @@ public class gameMaster : MonoBehaviour
     [Header("OTHER MASTERS LINKS")]
     [SerializeField] private guiMaster _gui;
     [SerializeField] private cameraMaster _camera;
+    [SerializeField] private deckMaster _deck;
+    [SerializeField] private tilePlacer _placer;
 
     [Header("MAP PARAMETERS")]
     [SerializeField] private float _tileSize = 1f;
@@ -23,7 +26,7 @@ public class gameMaster : MonoBehaviour
     private int iRightBorder = 9;
     private int iUpperBorder = 9;
 
-    
+
     private tile[,] _map;
     private int _tileCounter = 0;
     public int tileCounter { get { return _tileCounter; } }
@@ -32,7 +35,10 @@ public class gameMaster : MonoBehaviour
     {
         master = this;
         InitializeMap();
+        _placer.Initialize();
         _camera.Initialize();
+        _deck.Initialize();
+        _gui.Initialize();
     }
 
     private void InitializeMap()
@@ -40,19 +46,12 @@ public class gameMaster : MonoBehaviour
         iRightBorder = iMapWidth - 1;
         iUpperBorder = iMapHeight - 1;
         _map = new tile[iMapWidth, iMapHeight];
-        // for (int i = 0; i < iMapWidth; i++)
-        // {
-        //     for (int j = 0; j < iMapHeight; j++)
-        //     {
-        //         Debug.Log($"NULLING TILE {i} {j}");
-        //         _map[i, j] = null;
-        //     }
-        // }
     }
 
     public bool PlaceFree(int nx, int ny) => (_map[nx, ny] == null);
 
-    public bool CheckNeighbours(int nx, int ny, bool bOnlyStraight = true)
+    // check correctfull neighbourhood
+    public bool CheckNeighbours(int nx, int ny, tile ntile, bool bOnlyStraight = true)
     {
         //Debug.Log($"CHECKING NEIGHBOUR OF ({nx},{ny}) FROM ({((nx - 1 >= 0) ? nx - 1 : 0)},{((ny - 1 >= 0) ? ny - 1 : 0)}) TO ({((nx + 1 < iRightBorder) ? nx + 1 : iRightBorder)},{((ny + 1 < iUpperBorder) ? ny + 1 : iUpperBorder)})");
         tile[] neighbours;
@@ -64,12 +63,30 @@ public class gameMaster : MonoBehaviour
         {
             neighbours = StraightNeighbours(nx, ny);
         }
-        foreach (var i in neighbours)
+        foreach (var e in ntile.elements)
         {
-            if (i == null)
-                continue;
-            //Debug.Log(i.id);
+            // road
+            if (e.iType == 0)
+            {
+                foreach (var i in neighbours)
+                {
+                    if (i == null)
+                        continue;
+                    //Debug.Log(i.id);
+
+
+
+                }
+            }
         }
+
+        // foreach (var i in neighbours)
+        // {
+        //     if (i == null)
+        //         continue;
+        //     //Debug.Log(i.id);
+
+        // }
         return false;
     }
     // added to map
@@ -77,7 +94,7 @@ public class gameMaster : MonoBehaviour
     {
         if (!(IsInBounds(nx, ny) && PlaceFree(nx, ny)))
             return false;
-        
+
         _map[nx, ny] = ntile;
         _tileCounter++;
         return true;
@@ -133,4 +150,13 @@ public class gameMaster : MonoBehaviour
             return false;
         return true;
     }
+
+
+    public void DeckPull()
+    {
+        if (!_placer.bPlacing)
+            _placer.StartPlacingTile(_deck.PullOut());
+    }
+
+    public void PutBackTile(tile ntile) => _deck.PutBack(ntile);
 }

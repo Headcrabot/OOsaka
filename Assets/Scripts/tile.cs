@@ -11,12 +11,15 @@ public class tile : MonoBehaviour
     private bool bPlaced = false;
     private gameMaster _master;
     [SerializeField] private Renderer _render;
-    [SerializeField] private List<tileElement> elements;
+    [SerializeField] private List<tileElement> _elements;
+    public List<tileElement> elements { get { return _elements; } }
+
+    private bool bReversed = true;
 
     public void Colore(bool bAvailable)
     {
         //Debug.Log($"COLOR {_render.material.color} PLACED {bPlaced} INIT {bInitialized}");
-        if (bPlaced || !bInitialized) { return; }
+        if (bPlaced || !bReversed || !bInitialized) { return; }
         ChangeColor(bAvailable ? Color.green : Color.red);
     }
 
@@ -27,7 +30,7 @@ public class tile : MonoBehaviour
 
         _id = nid;
         gameObject.name = $"tile{_id}";
-
+        // it stored in deck
         _master = gameMaster.master;
         bInitialized = true;
     }
@@ -38,6 +41,16 @@ public class tile : MonoBehaviour
         ChangeColor(Color.white);
         transform.position = new Vector3(inx * _master.tileSize, _master.groundY, iny * _master.tileSize);
         bPlaced = true;
+    }
+
+    // card pick up
+    public void TurnOver()
+    {
+        bReversed = false;
+        if (bReversed)
+        {
+            ChangeColor(Color.gray);
+        }
     }
 
     private void ChangeColor(Color ncolor)

@@ -3,10 +3,11 @@ using UnityEngine;
 
 public class tilePlacer : MonoBehaviour
 {
-    private tile selectedTile = null;
-
+    [SerializeField] private tile selectedTile = null;
+    public bool bPlacing {get{ return selectedTile != null; } }
     [SerializeField] private tile tilePrefab;
     [SerializeField] private float fSelectedOffset = 1f;
+    [SerializeField] private bool bDeck = false;
 
     private gameMaster _master;
     private Camera _camera;
@@ -14,19 +15,38 @@ public class tilePlacer : MonoBehaviour
     private int iPlacingX = 0;
     private int iPlacingY = 0;
 
-    private void Start()
+    private bool bInitialized = false;
+
+    public void Initialize()
     {
+        if (bInitialized)
+            return;
         _master = gameMaster.master;
         _camera = Camera.main;
+        bInitialized = true;
     }
 
     public void StartPlacingTile(tile ntile)
     {
-        if (selectedTile != null)
+        if (ntile == null)
+            return;
+
+        if (bDeck)
         {
-            Destroy(selectedTile.gameObject);
+            if (bPlacing)
+            {
+                _master.PutBackTile(selectedTile);
+            }
+            selectedTile = ntile;
         }
-        selectedTile = Instantiate(ntile);
+        else
+        {
+            if (bPlacing)
+            {
+                Destroy(selectedTile.gameObject);
+            }
+            selectedTile = Instantiate(ntile);
+        }
         selectedTile.Initialize(_master.tileCounter);
     }
 
@@ -38,7 +58,7 @@ public class tilePlacer : MonoBehaviour
 
     private void Update()
     {
-        if (selectedTile != null)
+        if (bPlacing)
         {
             Plane worldPlane = new Plane(Vector3.up, Vector3.zero);
             Ray pointerRay = _camera.ScreenPointToRay(Input.mousePosition);
@@ -73,7 +93,7 @@ public class tilePlacer : MonoBehaviour
             // Debug
             if (Input.GetKeyDown(KeyCode.A))
             {
-                _master.CheckNeighbours(iPlacingX, iPlacingY);
+                _master.CheckNeighbours(iPlacingX, iPlacingY, selectedTile);
             }
         }
     }
