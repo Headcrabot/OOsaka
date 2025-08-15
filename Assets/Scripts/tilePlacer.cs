@@ -47,12 +47,12 @@ public class tilePlacer : MonoBehaviour
             }
             selectedTile = Instantiate(ntile);
         }
-        selectedTile.Initialize(_master.tileCounter);
+        selectedTile.Initialize();
     }
 
     private void PlaceTile()
     {
-        selectedTile.Place(iPlacingX, iPlacingY);
+        selectedTile.Place(iPlacingX, iPlacingY, _master.tileCounter);
         selectedTile = null;
     }
 
@@ -93,7 +93,7 @@ public class tilePlacer : MonoBehaviour
             // Debug
             if (Input.GetKeyDown(KeyCode.A))
             {
-                _master.CheckNeighbours(iPlacingX, iPlacingY, selectedTile);
+                Debug.Log(_master.CheckNeighbours(iPlacingX, iPlacingY, selectedTile));
             }
         }
     }

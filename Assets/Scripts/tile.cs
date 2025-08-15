@@ -23,21 +23,23 @@ public class tile : MonoBehaviour
         ChangeColor(bAvailable ? Color.green : Color.red);
     }
 
-    public void Initialize(int nid)
+    public void Initialize()
     {
         if (bInitialized)
             return;
 
-        _id = nid;
-        gameObject.name = $"tile{_id}";
+        ChangeColor(Color.gray);
         // it stored in deck
         _master = gameMaster.master;
         bInitialized = true;
     }
-    public void Place(int inx, int iny)
+    public void Place(int inx, int iny, int nid)
     {
         if (bPlaced)
             return;
+
+        _id = nid;
+        gameObject.name = $"tile{_id}";
         ChangeColor(Color.white);
         transform.position = new Vector3(inx * _master.tileSize, _master.groundY, iny * _master.tileSize);
         bPlaced = true;

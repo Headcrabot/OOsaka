@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class guiMaster : MonoBehaviour
 {
-    [SerializeField] private Button buttonPlace;
+    [SerializeField] private Button pullButton;
 
     private gameMaster _master;
     private bool bInitialized = false;
@@ -15,13 +15,13 @@ public class guiMaster : MonoBehaviour
             return;
 
         _master = gameMaster.master;
-        buttonPlace.onClick.AddListener(_master.DeckPull);
+        pullButton.onClick.AddListener(_master.DeckPull);
         
         bInitialized = true;
     }
 
     private void OGUI()
     {
-        
+
     }
 }

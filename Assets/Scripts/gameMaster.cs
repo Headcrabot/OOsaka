@@ -51,43 +51,10 @@ public class gameMaster : MonoBehaviour
     public bool PlaceFree(int nx, int ny) => (_map[nx, ny] == null);
 
     // check correctfull neighbourhood
-    public bool CheckNeighbours(int nx, int ny, tile ntile, bool bOnlyStraight = true)
+    public bool CheckNeighbours(int nx, int ny, tile ntile)
     {
         //Debug.Log($"CHECKING NEIGHBOUR OF ({nx},{ny}) FROM ({((nx - 1 >= 0) ? nx - 1 : 0)},{((ny - 1 >= 0) ? ny - 1 : 0)}) TO ({((nx + 1 < iRightBorder) ? nx + 1 : iRightBorder)},{((ny + 1 < iUpperBorder) ? ny + 1 : iUpperBorder)})");
-        tile[] neighbours;
-        if (bOnlyStraight)
-        {
-            neighbours = StraightNeighbours(nx, ny);
-        }
-        else
-        {
-            neighbours = StraightNeighbours(nx, ny);
-        }
-        foreach (var e in ntile.elements)
-        {
-            // road
-            if (e.iType == 0)
-            {
-                foreach (var i in neighbours)
-                {
-                    if (i == null)
-                        continue;
-                    //Debug.Log(i.id);
-
-
-
-                }
-            }
-        }
-
-        // foreach (var i in neighbours)
-        // {
-        //     if (i == null)
-        //         continue;
-        //     //Debug.Log(i.id);
-
-        // }
-        return false;
+        return CheckRoads(nx, ny, ntile);
     }
     // added to map
     public bool AppendToMap(int nx, int ny, tile ntile)
@@ -149,6 +116,39 @@ public class gameMaster : MonoBehaviour
         if (ny < 0 || ny > iMapHeight - 1)
             return false;
         return true;
+    }
+
+
+    private bool CheckRoads(int nx, int ny, tile ntile)
+    {
+        foreach (var i in ntile.elements)
+        {
+            if (i.iType == elementTypes.road)
+            {
+                // correct input
+                foreach (var neighbour in StraightNeighbours(nx, ny))
+                {
+                    if (neighbour == null)
+                        continue;
+
+                    foreach (var elem in neighbour.elements)
+                        {
+                            if (elem.iType == elementTypes.road)
+                            {
+                                //Debug.Log($"{ntile.id} {i.position} - {neighbour.id} {elem.position} - {(ntile.gameObject.transform.position - neighbour.transform.position)/tileSize}");
+                                // both i and elem road
+                                var relativePosition = (ntile.gameObject.transform.position - neighbour.transform.position) / tileSize;
+                                if (elem.position == -i.position && new Vector2Int((int)relativePosition.x, (int)relativePosition.z) == elem.position)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                }
+            }
+        }
+
+        return false;
     }
 
 

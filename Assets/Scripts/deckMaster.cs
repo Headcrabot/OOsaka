@@ -16,6 +16,11 @@ public class deckMaster : MonoBehaviour
             return;
 
         bInitialized = true;
+
+        foreach (var i in _deck)
+        {
+            i.Initialize();
+        }
     }
 
     public tile PullOut()
