@@ -10,7 +10,7 @@ public class tile : MonoBehaviour
     private bool bInitialized = false;
     private bool bPlaced = false;
     private gameMaster _master;
-    [SerializeField] private Renderer _render;
+    private tileVisuals _visual;
     [SerializeField] private List<tileElement> _elements;
     public List<tileElement> elements { get { return _elements; } }
 
@@ -19,8 +19,8 @@ public class tile : MonoBehaviour
     public void Colore(bool bAvailable)
     {
         //Debug.Log($"COLOR {_render.material.color} PLACED {bPlaced} INIT {bInitialized}");
-        if (bPlaced || !bReversed || !bInitialized) { return; }
-        ChangeColor(bAvailable ? Color.green : Color.red);
+        if (bPlaced || !bReversed || !bInitialized || !_visual) { return; }
+        _visual.ChangeColor(bAvailable ? Color.green : Color.red);
     }
 
     public void Initialize()
@@ -28,7 +28,11 @@ public class tile : MonoBehaviour
         if (bInitialized)
             return;
 
-        ChangeColor(Color.gray);
+        if (_visual = GetComponent<tileVisuals>())
+        {
+            _visual.Initialize();
+            _visual.ChangeColor(Color.white);
+        }
         // it stored in deck
         _master = gameMaster.master;
         bInitialized = true;
@@ -40,7 +44,10 @@ public class tile : MonoBehaviour
 
         _id = nid;
         gameObject.name = $"tile{_id}";
-        ChangeColor(Color.white);
+        if (_visual)
+        {
+            _visual.ChangeColor(Color.white);
+        }
         transform.position = new Vector3(inx * _master.tileSize, _master.groundY, iny * _master.tileSize);
         bPlaced = true;
     }
@@ -49,14 +56,11 @@ public class tile : MonoBehaviour
     public void TurnOver()
     {
         bReversed = false;
+        _visual.ChangeColor(Color.white);
         if (bReversed)
         {
-            ChangeColor(Color.gray);
+            // ChangeColor(Color.gray);
         }
     }
 
-    private void ChangeColor(Color ncolor)
-    {
-        _render.material.color = ncolor;
-    }
 }
