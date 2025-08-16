@@ -3,7 +3,8 @@ using UnityEngine;
 public enum elementTypes
 {
     road,
-    jinja
+    jinja,
+    minka
 }
 
 public class tileElement : MonoBehaviour

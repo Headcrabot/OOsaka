@@ -81,7 +81,7 @@ public class tilePlacer : MonoBehaviour
 
             bool bAvaliable = false;
 
-            bAvaliable = _master.PlaceFree(iPlacingX, iPlacingY);
+            bAvaliable = _master.TilePlaceable(iPlacingX, iPlacingY, selectedTile);
             //Debug.Log($"CHECKING TILE {iPlacingX} {iPlacingY} IS {bAvaliable}");
             selectedTile.Colore(bAvaliable);
             if (Input.GetMouseButtonDown(1) && bAvaliable)
@@ -91,10 +91,10 @@ public class tilePlacer : MonoBehaviour
             }
 
             // Debug
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                Debug.Log(_master.CheckNeighbours(iPlacingX, iPlacingY, selectedTile));
-            }
+            // if (Input.GetKeyDown(KeyCode.A))
+            // {
+            //     Debug.Log(_master.CheckNeighbours(iPlacingX, iPlacingY, selectedTile));
+            // }
         }
     }
 }

@@ -50,11 +50,14 @@ public class gameMaster : MonoBehaviour
 
     public bool PlaceFree(int nx, int ny) => (_map[nx, ny] == null);
 
+    public bool TilePlaceable(int nx, int ny, tile ntile) => (PlaceFree(nx, ny) && CheckNeighbours(nx, ny, ntile));
+    
     // check correctfull neighbourhood
     public bool CheckNeighbours(int nx, int ny, tile ntile)
     {
         //Debug.Log($"CHECKING NEIGHBOUR OF ({nx},{ny}) FROM ({((nx - 1 >= 0) ? nx - 1 : 0)},{((ny - 1 >= 0) ? ny - 1 : 0)}) TO ({((nx + 1 < iRightBorder) ? nx + 1 : iRightBorder)},{((ny + 1 < iUpperBorder) ? ny + 1 : iUpperBorder)})");
-        return CheckRoads(nx, ny, ntile);
+        bool bAvailable = CheckRoads(nx, ny, ntile);
+        return bAvailable;
     }
     // added to map
     public bool AppendToMap(int nx, int ny, tile ntile)
@@ -79,8 +82,8 @@ public class gameMaster : MonoBehaviour
 
         neighbours[0] = (nx > 0) ? (_map[nx - 1, ny]) : (null);
         neighbours[1] = (ny > 0) ? (_map[nx, ny - 1]) : (null);
-        neighbours[2] = (nx < iMapWidth - 1) ? (_map[nx + 1, ny]) : (null);
-        neighbours[3] = (nx < iMapHeight - 1) ? (_map[nx, ny + 1]) : (null);
+        neighbours[2] = (nx < iRightBorder) ? (_map[nx + 1, ny]) : (null);
+        neighbours[3] = (ny < iUpperBorder) ? (_map[nx, ny + 1]) : (null);
 
         return neighbours;
     }
@@ -121,6 +124,7 @@ public class gameMaster : MonoBehaviour
 
     private bool CheckRoads(int nx, int ny, tile ntile)
     {
+        bool bAnyNeighbours = false;
         foreach (var i in ntile.elements)
         {
             if (i.iType == elementTypes.road)
@@ -130,25 +134,25 @@ public class gameMaster : MonoBehaviour
                 {
                     if (neighbour == null)
                         continue;
-
+                    bAnyNeighbours = true;
                     foreach (var elem in neighbour.elements)
+                    {
+                        if (elem.iType == elementTypes.road)
                         {
-                            if (elem.iType == elementTypes.road)
+                            //Debug.Log($"{ntile.id} {i.position} - {neighbour.id} {elem.position} - {(ntile.gameObject.transform.position - neighbour.transform.position)/tileSize}");
+                            // both i and elem road
+                            var relativePosition = (ntile.gameObject.transform.position - neighbour.transform.position) / tileSize;
+                            if (elem.position == -i.position && new Vector2Int((int)relativePosition.x, (int)relativePosition.z) == elem.position)
                             {
-                                //Debug.Log($"{ntile.id} {i.position} - {neighbour.id} {elem.position} - {(ntile.gameObject.transform.position - neighbour.transform.position)/tileSize}");
-                                // both i and elem road
-                                var relativePosition = (ntile.gameObject.transform.position - neighbour.transform.position) / tileSize;
-                                if (elem.position == -i.position && new Vector2Int((int)relativePosition.x, (int)relativePosition.z) == elem.position)
-                                {
-                                    return true;
-                                }
+                                return true;
                             }
                         }
+                    }
                 }
             }
         }
 
-        return false;
+        return !bAnyNeighbours;
     }
 
 
